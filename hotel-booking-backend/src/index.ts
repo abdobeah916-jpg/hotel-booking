@@ -149,6 +149,7 @@ const allowedOrigins = [
   "https://mern-booking-hotel.netlify.app/",
   "https://hotel-mern-booking.vercel.app",
   "https://hotel-mern-booking.vercel.app/",
+  "https://abdobeah916-jpg.github.io",
 ].filter((origin): origin is string => Boolean(origin));
 app.use(
   cors({
@@ -156,8 +157,12 @@ app.use(
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
 
-      // Allow all Netlify and Vercel preview URLs
-      if (origin.includes("netlify.app") || origin.includes("vercel.app")) {
+      // Allow all Netlify, Vercel, and GitHub Pages preview URLs
+      if (
+        origin.includes("netlify.app") ||
+        origin.includes("vercel.app") ||
+        origin.endsWith(".github.io")
+      ) {
         return callback(null, true);
       }
 
@@ -191,8 +196,12 @@ app.options(
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
 
-      // Allow all Netlify and Vercel preview URLs
-      if (origin.includes("netlify.app") || origin.includes("vercel.app")) {
+      // Allow all Netlify, Vercel, and GitHub Pages preview URLs
+      if (
+        origin.includes("netlify.app") ||
+        origin.includes("vercel.app") ||
+        origin.endsWith(".github.io")
+      ) {
         return callback(null, true);
       }
 
