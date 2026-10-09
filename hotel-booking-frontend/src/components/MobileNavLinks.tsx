@@ -1,0 +1,70 @@
+import { Link } from "react-router-dom";
+import { useQuery } from "react-query";
+import { Button } from "./ui/button";
+import { Building2, Calendar, BarChart3, LogIn } from "lucide-react";
+import UsernameMenu from "./UsernameMenu";
+import useAppContext from "../hooks/useAppContext";
+import { prefetchBusinessInsightsQueries } from "../lib/invalidate-queries";
+import { queryClient } from "../main";
+import * as apiClient from "../api-client";
+
+const linkClass =
+  "flex items-center gap-2 w-full py-3 text-sm font-normal text-gray-700 hover:text-primary-600 transition-colors";
+
+/** Mobile nav — API Docs/Status live in UsernameMenu when logged in (not here). */
+const MobileNavLinks = () => {
+  const { isLoggedIn } = useAppContext();
+
+  const { data: currentUser } = useQuery(
+    "fetchCurrentUser",
+    apiClient.fetchCurrentUser,
+    { enabled: isLoggedIn },
+  );
+  const normalizedRole = String(currentUser?.role || "")
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+  const isManager =
+    normalizedRole === "admin" || normalizedRole === "hotel_owner";
+
+  return (
+    <div className="flex flex-col gap-1">
+      <Link to="/my-bookings" className={linkClass}>
+        <Calendar className="h-4 w-4" />
+        My Bookings
+      </Link>
+      {isManager && (
+        <Link
+          to="/business-insights"
+          className={linkClass}
+          onMouseEnter={() => prefetchBusinessInsightsQueries(queryClient)}
+        >
+          <BarChart3 className="h-4 w-4" />
+          Business Insights
+        </Link>
+      )}
+      {isManager && (
+        <Link to="/my-hotels" className={linkClass}>
+          <Building2 className="h-4 w-4" />
+          My Rooms
+        </Link>
+      )}
+
+      <div className="h-px bg-border my-4" />
+
+      <div className="min-h-[52px] flex items-center justify-center">
+        {isLoggedIn ? (
+          <UsernameMenu />
+        ) : (
+          <Link to="/sign-in" className="w-full">
+            <Button className="w-full font-medium bg-primary-600 hover:bg-primary-700">
+              <LogIn className="h-4 w-4 " />
+              Log In
+            </Button>
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default MobileNavLinks;
